@@ -1,0 +1,89 @@
+group 'doma-kotlin'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.1.2-2'
+    ext.springboot_version = "1.5.6.RELEASE"
+    ext.doma_version = "2.16.1"
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springboot_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
+    }
+}
+
+apply plugin: "java"
+apply plugin: "kotlin"
+apply plugin: "kotlin-spring"
+apply plugin: "kotlin-kapt"
+apply plugin: "org.springframework.boot"
+apply plugin: "application"
+apply plugin: "idea"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+processResources.destinationDir = compileJava.destinationDir
+compileJava.dependsOn processResources
+
+kapt {
+    generateStubs = false
+    arguments {
+        arg("doma.resources.dir", processResources.destinationDir)
+    }
+}
+
+mainClassName = "app.Application"
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = file("$buildDir/classes/main/")
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    compile "org.springframework.boot:spring-boot-starter-web:$springboot_version"
+    compile "org.springframework.boot:spring-boot-actuator:$springboot_version"
+
+    // db
+    compile "org.seasar.doma.boot:doma-spring-boot-autoconfigure:1.1.0"
+    compile "org.seasar.doma:doma:$doma_version"
+    kapt "org.seasar.doma:doma:$doma_version"
+    compile "commons-dbcp:commons-dbcp:1.4"
+
+    // test
+    testCompile "org.springframework.boot:spring-boot-starter-test:$springboot_version"
+
+    runtime "mysql:mysql-connector-java:6.0.5"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir 'src/main/kotlin'
+        }
+        java {
+            srcDir 'src/main/java'
+        }
+    }
+}

@@ -1,0 +1,3 @@
+test:
+  driver: mymysql
+  open: tcp:localhost:3306*doma_kotlin_test/root/
